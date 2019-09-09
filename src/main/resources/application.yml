@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    username: root
+    password: root
+    url: jdbc:mysql://localhost:3306/wxservice?serverTimezone=GMT%2b8&useUnicode=true&characterEncoding=utf-8&useSSL=true
+    driver-class-name: com.mysql.jdbc.Driver
+server:
+  port: 8081
+
+schedual:
+  batch:
+    leadingOutUsers: 0 0 16 * * ?
