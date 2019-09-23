@@ -2,6 +2,7 @@ package com.pingan.common.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.pingan.common.entity.User;
+import com.pingan.common.model.Page;
 import com.pingan.common.model.UserModel;
 import com.pingan.common.service.UserService;
 import com.pingan.enums.GenderEnum;
@@ -67,5 +68,12 @@ public class UserController {
         BeanUtils.copyProperties(userModel,user);
         userService.createUser(user);
         return true;
+    }
+
+    @ApiOperation(httpMethod = "GET",value = "原生sql查询用户",notes = "原生sql查询用户")
+    @RequestMapping(value = "/get/userlist",method = RequestMethod.GET,produces = "application/json")
+    public Page getByEntityManager(){
+        logger.info("UserController getByEntityManager begin");
+        return userService.getByEntityManager();
     }
 }

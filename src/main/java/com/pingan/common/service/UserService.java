@@ -2,6 +2,7 @@ package com.pingan.common.service;
 
 import com.alibaba.fastjson.JSON;
 import com.pingan.common.entity.User;
+import com.pingan.common.model.Page;
 import com.pingan.common.repository.UserRepository;
 import com.pingan.enums.GenderEnum;
 import org.slf4j.Logger;
@@ -10,6 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -22,6 +27,8 @@ public class UserService {
     private static Logger logger = LoggerFactory.getLogger(UserService.class);
     @Autowired
     private UserRepository userRepository;
+    @PersistenceUnit
+    private EntityManagerFactory emf;
 
     public User createUser(){
         User user = User.of();
@@ -78,4 +85,36 @@ public class UserService {
         logger.info("UserService findByList all is"+JSON.toJSONString(all));
         return all;
     }
+
+    public Page getByEntityManager() {
+        int p = 2;
+        int size = 2;
+        Page<User> page = new Page<>();
+        page.setPage(p);
+        page.setSize(size);
+        EntityManager ef = emf.createEntityManager();
+        StringBuffer sql = new StringBuffer();
+        sql.append("select id ,user_name,mobile,gender,create_date from sys_user order by create_date desc");
+        int total = ef.createNativeQuery(sql.toString()).getResultList().size();
+        page.setTotalElements(total);
+        if (0 == total){
+            return page;
+        }
+        page.setTotalPage(returnTotalPage(size,total));
+        Query query = ef.createNativeQuery(sql.toString(),User.class);
+        query.setFirstResult((p-1)*size).setMaxResults(size);
+        List<User> resultList = query.getResultList();
+        page.setElements(resultList);
+        logger.info("UserService respbody is"+JSON.toJSONString(page));
+        return page;
+    }
+
+    private int returnTotalPage(int size,int totalSize){
+        int totalPage = totalSize/size;
+        if (totalSize%size != 0){
+            totalPage += 1;
+        }
+        return totalPage;
+    }
+
 }
