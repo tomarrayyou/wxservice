@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -117,4 +118,20 @@ public class UserService {
         return totalPage;
     }
 
+    /**
+     * @Author: shouwangqingzhong
+     * @Description:  测试更新null值
+     * @Date: 2019/10/25 14:45
+     * @Param: []
+     * @return: com.pingan.common.entity.User
+     * @version: 3.0.0
+     **/
+    public User testUpdateNull() {
+        Optional<User> userOptional = userRepository.findById(50L);
+        Assert.isTrue(userOptional.isPresent(),String.format("id为%s的用户不存在",50L));
+        User user = userOptional.get();
+        user.setGender(null);
+        User save = userRepository.save(user);
+        return save;
+    }
 }

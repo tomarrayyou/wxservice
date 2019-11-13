@@ -76,4 +76,12 @@ public class UserController {
         logger.info("UserController getByEntityManager begin");
         return userService.getByEntityManager();
     }
+
+    @ApiOperation(httpMethod = "GET",value = "测试更新null值",notes = "测试更新null值")
+    @RequestMapping(value = "/get/test/updatenull",method = RequestMethod.GET,produces = "application/json")
+    public User testUpdateNull(){
+        logger.info("UserController testUpdateNull begin");
+        return userService.testUpdateNull();
+    }
+
 }
